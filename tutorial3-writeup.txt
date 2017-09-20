@@ -1,0 +1,105 @@
+Sandar Klinton
+NPM 1306404720
+APAP-A - Tutorial 3
+------------------------------------------  Lesson Learned --------------------------------------------
+1. Jangan lupa untuk menambahkan @controller pada kelas controller. Saya uring2an sebentar karena hal 
+   ini :D
+2. Ternyata, path variable optional bisa dicek keberadaannya.
+3. Pastikan anda menggunakan .get() saat ingin mengakses isi dari kelas optional.
+
+
+
+------------------------------------------BAGIAN PERTANYAAN--------------------------------------------
+1. Tidak Error.
+2. Error, karena request tidak menyediakan parameter GPA. Pada controller dengan request mapping berkaitan,
+   request param GPA diset sebagai required (required = true.)
+3. Data tersebut muncul.
+4. Request tersebut mengembalikan laman error, karena saat mengembalikan halaman view.html, tidak ada 
+   student yang diassign ke model. HAL INI dikarenakan data yang digunakan program ini akan hilang setelah
+   aplikasi direstart. Saat dimatikan, data yang kita telah masukkan akan hilang karena object StudentModel
+   terhapus. Maka dari itu, pada saat controller mencari, objek Student pada controller akan bernilai null.
+   Karena di model disimpan dengan null, maka pada saat sistem mencoba mengembalikan view.html terjadi error.
+5. Muncul.
+6. Muncul. (saya harap asdos dapat mengecek, karena saya tidak sempat apabila menyusun writeup dengan pdf.)
+
+------------------------------------------BAGIAN LATIHAN--------------------------------------------
+No. 1.
+	- membuat request mapping "/student/view/{npm}"
+	- mengimplementasikan metode viewStudent(). Hampir mirip dengan mapping "/student/view", maka mengkopi
+	  metode yang ada di view().
+	- karena meminta halaman error, maka saya susun sebuah logic. 
+			If npm kosong:
+				kembalikan laman error beserta pesan.
+			else:
+				if npm ada:
+					ambil data;
+					kembalikan laman view beserta objek.
+				else:
+				 	kembalikan laman error beserta pesan.
+	- membuat halaman errortutor.html yang mencetak error. errortutor, agar tetap mengembalikan laman error saat ada error yang lain.
+	 
+No. 2.
+	- membuat request mapping deletestudent(no 2)
+	- membuat method deleteStudent di StudentService.java dan implementasinya di InMemoryStudentService.java
+	- memeriksa bagaimana mengecek NPM bila kosong di path variable
+	- implementasi controller deleteStudent (mendelete NPM menggunakan studentService.deleteStudent(npm))
+	- membuat halaman deletesuccess.html, mengantar message berhasil atau gagal saat mencoba menghapus npm.
+	
+Setelah Testing implementasi 1 dan 2, dilakukan debugging secara bersamaan karena algoritmanya sama.
+	- debugging, parsing dari Optional ke String.
+	
+----------------------------------Penjelasan metode-----------------------------------------------------
+Berikut adalah Method Select student yang diimplementasikan.
+@Override 
+	public StudentModel selectStudent(String npm) {
+		// TODO Auto-generated method stub
+		StudentModel item = null;
+		boolean isFound = false;
+		int a = 0;
+		
+		while (!isFound && a < studentList.size()) {
+			if(studentList.get(a).getNpm().equals(npm)){
+				isFound = true;
+				item = studentList.get(a);
+			}
+			a++;
+		}
+		
+		return item;
+	}
+
+Berikut adalah penjelasan dari fitur delete dari sisi controller.
+	
+	Controller untuk delete mempunyai algoritma yang hampir sama dengan search. 
+	
+			If npm kosong:
+				kembalikan laman error beserta pesan.
+			else:
+				if lakukan delete dan terdelete:
+					kembalikan laman deletesucess beserta pesan.
+				else:
+				 	kembalikan laman error beserta pesan.
+	
+	Bedanya,pada fitur delete, deleteStudent yang saya implementasikan di dalam InMemoryStudentService.java
+	adalah method boolean. mengembalikan true apabila delete berhasil, namun false bila tidak ada.
+	Saya memilih Boolean agar dapat langsung dimasukkan pada conditional if. Saya juga tidak lupa untuk 
+	menambahkan method tersebut pada StudentService interface. 
+	
+	Ini method deleteStudent di dalam InMemoryStudentService.java.
+	
+	@override
+	public boolean deleteStudent(String npm) {
+		Boolean checkExist = false;
+		int a = 0;
+		while (checkExist == false && a < studentList.size()) {
+			if(studentList.get(a).getNpm().equals(npm)){
+				studentList.remove(a);
+				checkExist = true;
+			}
+			a++;
+		}
+		
+		return checkExist;
+	}
+	
+	
